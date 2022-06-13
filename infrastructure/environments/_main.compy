@@ -7,17 +7,51 @@
 * which we can launch our aws resources.  This is effectively the root of our
 * private network.
 */
-resource "aws_vpc" "main_vpc" {
-  cidr_block           = "172.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+# resource "aws_vpc" "main_vpc" {
+#   cidr_block           = "172.0.0.0/16"
+#   enable_dns_support   = true
+#   enable_dns_hostnames = true
 
-  tags = {
-    Application = "ceros-ski"
-    Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-main_vpc"
-    Resource    = "modules.environment.aws_vpc.main_vpc"
-  }
+#   tags = {
+#     Application = "ceros-ski"
+#     Environment = var.environment
+#     Name        = "ceros-ski-${var.environment}-main_vpc"
+#     Resource    = "modules.environment.aws_vpc.main_vpc"
+#   }
+# }
+
+# vpc
+module "vpc_module" {
+  source   = "./modules/vpc"
+}
+
+module "internet_gateway_module" {
+  source   = "./modules/internet_gateway"
+  vpc_id   = module.vpc_module.vpc_id
+}
+
+module "elastic_ip_module" {
+  source = "./modules/elastic_ip"
+}
+
+module "subnet_public_module" {
+  source            = "./modules/subnets/public"
+  vpc_id            = module.vpc_module.vpc_id
+  vpc_cidr_block = module.vpc_module.vpc_cidr_block
+  internet_gateway_id = module.internet_gateway_module.internet_gateway_id
+   elastic_ip_id = module.elastic_ip_module.elastic_ip_id
+  availability_zone = var.availability_zone
+ environment = var.environment
+}
+
+module "subnet_private_module" {
+  source            = "./modules/subnets/private"
+  vpc_id            = module.vpc_module.vpc_id
+  vpc_cidr_block = module.vpc_module.vpc_cidr_block
+  availability_zone = var.availability_zone
+  elastic_ip_id = module.elastic_ip_module.elastic_ip_id
+  internet_gateway_id = module.internet_gateway_module.internet_gateway_id
+  environment = var.environment
 }
 
 /**
@@ -65,6 +99,7 @@ resource "aws_eip" "eip_for_the_nat_gateway" {
 * exposed to the public internet, with public IPs, by default.  They don't need
 * to go through, and aren't shielded by, the NAT Gateway.
 */
+
 resource "aws_subnet" "public_subnets" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = cidrsubnet(aws_vpc.main_vpc.cidr_block, 8, 2 + count.index)
@@ -78,6 +113,7 @@ resource "aws_subnet" "public_subnets" {
     Environment = var.environment
   }
 }
+
 /**
 * A NAT Gateway that lives in our public subnet and provides an interface
 * between our private subnets and the public internet.  It allows traffic to
@@ -99,6 +135,7 @@ resource "aws_nat_gateway" "nat_gateway" {
 /**
 * A route table for our public subnet.
 */
+
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.main_vpc.id
 
@@ -227,8 +264,10 @@ resource "aws_security_group" "bastion" {
     Environment = var.environment
     Resource    = "modules.availability_zone.aws_security_group.bastion"
   }
-
+  
 }
+
+
 
 /**
 * The public key for the key pair we'll use to ssh into our bastion instance.
@@ -250,6 +289,7 @@ data "aws_ssm_parameter" "linux2_ami" {
 * Launch a bastion instance we can use to gain access to the private subnets of
 * this availabilty zone.
 */
+
 resource "aws_instance" "bastion" {
   ami           = data.aws_ssm_parameter.linux2_ami.value
   key_name      = aws_key_pair.bastion.key_name

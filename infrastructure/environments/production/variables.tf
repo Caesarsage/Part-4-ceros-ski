@@ -1,5 +1,6 @@
 variable "environment" {
   type        = string
+  default     = "production"
   description = "The name of the environment we'd like to launch."
 }
 
@@ -24,13 +25,4 @@ variable "public_subnets_count" {
 variable "availability_zones" {
   type        = list(any)
   description = "List of Availability Zones"
-}
-variable "aws_credentials_file" {
-  type = string
-}
-variable "aws_profile" {
-  type = string
-}
-variable "aws_region" {
-  type = string
 }
