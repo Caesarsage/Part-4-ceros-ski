@@ -1,8 +1,9 @@
 variable "environment" {
   type        = string
-  default     = "production"
+  default     = "staging"
   description = "The name of the environment we'd like to launch."
 }
+variable "cidr_block" {}
 variable "aws_credentials_file" {
   type = string
 }
@@ -12,5 +13,6 @@ variable "aws_profile" {
 variable "aws_region" {
   type = string
 }
-variable "repository_url" {}
-variable "public_key" {} 
+variable "availability_zones" {}
+variable "private_subnets_count" {}
+variable "public_subnets_count" {}

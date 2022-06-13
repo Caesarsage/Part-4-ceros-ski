@@ -1,6 +1,6 @@
 variable "environment" {
   type        = string
-  default     = "production"
+  default     = "staging"
   description = "The name of the environment we'd like to launch."
 }
 variable "aws_credentials_file" {
