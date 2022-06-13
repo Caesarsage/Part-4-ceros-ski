@@ -1,0 +1,4 @@
+- Refactor for stagging and production environment
+- Modularized terraform resources
+- Utilize s3 backend and Dynamo db for multi state management
+- Implement best practices for file/folder structure
