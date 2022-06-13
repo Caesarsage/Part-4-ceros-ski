@@ -121,16 +121,16 @@ resource "aws_ecs_service" "backend" {
   deployment_maximum_percent         = 100
 
   network_configuration {
-    security_groups = [var.security_group_autoscaling_group_id]
+    security_groups = [var.security_group_autoscaling_id]
     subnets         = var.private_subnets.*.id
   }
   load_balancer {
-    target_group_arn = aws_lb_target_group.ceros-ski.id
+    target_group_arn = var.load_balancer_target_group
     container_name   = "ceros-ski"
     container_port   = 80
   }
   depends_on = [
-    aws_lb_listener.ceros-ski
+    var.load_balancer_listener
   ]
 
   ordered_placement_strategy {

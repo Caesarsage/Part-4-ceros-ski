@@ -26,7 +26,7 @@ resource "aws_instance" "bastion" {
 
   associate_public_ip_address = true
   subnet_id                   = element(var.public_subnets, 0).id
-  vpc_security_group_ids      = [var.security_group_bation_id]
+  vpc_security_group_ids      = [var.security_group_bastion_id]
 
   tags = {
     Application = "ceros-ski"

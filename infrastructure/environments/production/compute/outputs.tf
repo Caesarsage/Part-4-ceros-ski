@@ -1,3 +1,3 @@
 output "load-balancer-ip" {
-  value = aws_lb.default.dns_name
+  value = module.load_balancer_module.load-balancer-ip
 }

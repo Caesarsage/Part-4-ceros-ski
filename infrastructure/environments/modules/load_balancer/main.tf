@@ -4,7 +4,7 @@
 resource "aws_lb" "default" {
   name            = "ecs-lb"
   subnets         = var.public_subnets.*.id
-  security_groups = [var.security_group.load_balancer_id]
+  security_groups = [var.security_group_load_balancer_id]
 }
 
 resource "aws_lb_target_group" "ceros-ski" {

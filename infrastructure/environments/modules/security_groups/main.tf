@@ -85,4 +85,10 @@ resource "aws_security_group" "lb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Application = "ceros-ski"
+    Environment = var.environment
+    Resource    = "modules.ecs.cluster.aws_security_group.ecs-alb-security-group"
+  }
 }
