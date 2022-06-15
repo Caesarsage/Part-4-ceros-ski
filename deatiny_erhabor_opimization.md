@@ -36,4 +36,4 @@
 
 ## Initial loaded game before optimization
 
-<img src="./assets/final.PNG" alt="loaded" ></img>
+<img src="./assets/final.PNG" alt="loaded"></img>

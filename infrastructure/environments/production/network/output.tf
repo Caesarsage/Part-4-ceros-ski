@@ -1,12 +1,9 @@
-# output "vpc_id" {
-#   value = module.vpc_module.vpc_id
-# }
-# output "subnet_public" {
-#   value = module.subnet_public_module.public_subnets
-# }
-# output "subnet_private" {
-#   value = module.subnet_private_module.private_subnets
-# }
-# output "environment" {
-#   value = var.environment
-# }
+output "vpc_id" {
+  value = module.network_module.vpc_id
+}
+output "private_subnets" {
+  value = module.network_module.private_subnets
+}
+output "public_subnets" {
+  value = module.network_module.public_subnets
+}

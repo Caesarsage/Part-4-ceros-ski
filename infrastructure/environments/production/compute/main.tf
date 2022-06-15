@@ -17,95 +17,13 @@ terraform {
   }
 }
 
-data "aws_vpc" "vpc" {
-  tags = {
-    Environment = var.environment
-    Name        = "ceros-ski-production-main_vpc"
-    Application = "ceros-ski"
-    Resource    = "modules.environment.aws_vpc.main_vpc"
-  }
-}
-
-data "aws_subnet_ids" "private_subnets" {
-  vpc_id = data.aws_vpc.vpc.id
-
-  tags = {
-    Environment = var.environment
-    Resource    = "modules.availability_zone.aws_subnet.private_subnet"
-  }
-}
-
-data "aws_subnet_ids" "public_subnets" {
-  vpc_id = data.aws_vpc.vpc.id
-
-  tags = {
-    Resource    = "modules.availability_zone.aws_subnet.public_subnet"
-    Environment = var.environment
-    Application = "ceros-ski"
-  }
-}
-
-data "aws_security_groups" "security_group_bastion" {
-  tags = {
-    Resource    = "modules.availability_zone.aws_security_group.bastion"
-    Application = "ceros-ski"
-    Environment = var.environment
-  }
-}
-
-data "aws_security_groups" "security_group_autoscaling" {
-  tags = {
-    Application = "ceros-ski"
-    Resource    = "modules.ecs.cluster.aws_security_group.autoscaling_group"
-    Environment = var.environment
-  }
-}
-
-data "aws_security_groups" "security_group_ecs-alb" {
-  tags = {
-    Application = "ceros-ski"
-    Resource    = "modules.ecs.cluster.aws_security_group.ecs-alb-security-group"
-    Environment = var.environment
-  }
-}
-
-/******************************************************************************
-* Bastion Host
-*******************************************************************************/
-/**/
-
-
-
-module "bastion_module" {
-  source = "../../modules/bastion"
-
-  security_group_bastion_id = data.aws_security_groups.security_group_bastion.id
-  public_key                = var.public_key
-  public_subnets            = data.aws_subnet_ids.public_subnets.ids
-  environment               = var.environment
-}
-
-module "iam_module" {
-  source = "../../modules/iam"
-}
-
-module "load_balancer_module" {
-  source = "../../modules/load_balancer"
-
-  public_subnets                  = data.aws_subnet_ids.public_subnets
-  security_group_load_balancer_id = data.aws_security_groups.security_group_ecs-alb.id
-  vpc_id                          = data.aws_vpc.vpc.id
-}
-
-module "ecs_cluster_module" {
-  source = "../../modules/ecs_cluster"
-
-  load_balancer_target_group = module.load_balancer_module.load_balancer_target_group
-  load_balancer_listener     = module.load_balancer_module.load_balancer_listener
-
-  security_group_autoscaling_id = data.aws_security_groups.security_group_autoscaling.id
-  private_subnets               = data.aws_subnet_ids.private_subnets
-  repository_url                = var.repository_url
-  iam_instance_profile          = module.iam_module.iam_instance_profile
-  environment                   = var.environment
+module "compute_module" {
+  source                = "../../modules/compute/index"
+  repository_url        = var.repository_url
+  public_key            = var.public_key
+  environment           = var.environment
+  availability_zones    = var.availability_zones
+  cidr_block            = var.cidr_block
+  public_subnets_count  = var.public_subnets_count
+  private_subnets_count = var.private_subnets_count
 }

@@ -122,7 +122,7 @@ resource "aws_ecs_service" "backend" {
 
   network_configuration {
     security_groups = [var.security_group_autoscaling_id]
-    subnets         = tolist(var.private_subnets.*.id)
+    subnets         = var.private_subnets.*.id
   }
   load_balancer {
     target_group_arn = var.load_balancer_target_group
