@@ -1,23 +1,3 @@
-
-/**
-* A NAT Gateway that lives in our public subnet and provides an interface
-* between our private subnets and the public internet.  It allows traffic to
-* exit our private subnets, but prevents traffic from entering them.
-*/
-
-
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = var.elastic_ip_id
-  subnet_id     = element(var.public_subnets.*.id, 0)
-
-  tags = {
-    Application = "ceros-ski"
-    Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-us-east-1a"
-    Resource    = "modules.availability_zone.aws_nat_gateway.nat_gateway"
-  }
-}
-
 /******************************************************************************
 * Private Subnet 
 *******************************************************************************/
@@ -66,7 +46,7 @@ resource "aws_route_table" "private_rt" {
   vpc_id = var.vpc_id
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+    nat_gateway_id = var.nat_gateway_id
   }
 }
 

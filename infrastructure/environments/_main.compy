@@ -19,41 +19,6 @@
 #     Resource    = "modules.environment.aws_vpc.main_vpc"
 #   }
 # }
-
-# vpc
-module "vpc_module" {
-  source   = "./modules/vpc"
-}
-
-module "internet_gateway_module" {
-  source   = "./modules/internet_gateway"
-  vpc_id   = module.vpc_module.vpc_id
-}
-
-module "elastic_ip_module" {
-  source = "./modules/elastic_ip"
-}
-
-module "subnet_public_module" {
-  source            = "./modules/subnets/public"
-  vpc_id            = module.vpc_module.vpc_id
-  vpc_cidr_block = module.vpc_module.vpc_cidr_block
-  internet_gateway_id = module.internet_gateway_module.internet_gateway_id
-   elastic_ip_id = module.elastic_ip_module.elastic_ip_id
-  availability_zone = var.availability_zone
- environment = var.environment
-}
-
-module "subnet_private_module" {
-  source            = "./modules/subnets/private"
-  vpc_id            = module.vpc_module.vpc_id
-  vpc_cidr_block = module.vpc_module.vpc_cidr_block
-  availability_zone = var.availability_zone
-  elastic_ip_id = module.elastic_ip_module.elastic_ip_id
-  internet_gateway_id = module.internet_gateway_module.internet_gateway_id
-  environment = var.environment
-}
-
 /**
 * Provides a connection between the VPC and the public internet, allowing
 * traffic to flow in and out of the VPC and translating IP addresses to public

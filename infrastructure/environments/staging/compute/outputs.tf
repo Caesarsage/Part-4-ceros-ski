@@ -1,3 +1,3 @@
-# output "load-balancer-ip" {
-#   value = module.load_balancer_module.load-balancer-ip
-# }
+output "load-balancer-ip" {
+  value = module.compute_module.load-balancer-ip
+}

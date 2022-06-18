@@ -1,6 +1,6 @@
 variable "environment" {
   type        = string
-  default     = "staging"
+  default     = "production"
   description = "The name of the environment we'd like to launch."
 }
 variable "cidr_block" {}

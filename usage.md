@@ -48,6 +48,8 @@ $ cd app
 # Build the docker image.
 $ docker build -t ceros-ski .
 
+ecs-lb-1454201120.us-east-1.elb.amazonaws.com
+
 # Tag the docker image.
 $ docker tag <repository_url>/ceros-ski:latest
 

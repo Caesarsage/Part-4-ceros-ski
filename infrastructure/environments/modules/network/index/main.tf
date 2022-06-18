@@ -13,11 +13,7 @@ module "internet_gateway_module" {
   environment = var.environment
 }
 
-# # ELASTIC IP 
-module "elastic_ip_module" {
-  source      = "../elastic_ip"
-  environment = var.environment
-}
+
 
 # # PUBLIC SUBNET
 module "subnet_public_module" {
@@ -31,14 +27,20 @@ module "subnet_public_module" {
   public_subnets_count = var.public_subnets_count
 }
 
+module "nat_gateway_module" {
+  source                = "../nat_gateway"
+  public_subnets = module.subnet_public_module.public_subnets
+  environment = var.environment
+}
+
 # # PRIVATE SUBNET
 module "subnet_private_module" {
   source                = "../subnets/private"
   vpc_id                = module.vpc_module.vpc_id
   vpc_cidr_block        = module.vpc_module.vpc_cidr_block
+  nat_gateway_id = module.nat_gateway_module.nat_gateway_id
+
   availability_zones    = var.availability_zones
-  elastic_ip_id         = module.elastic_ip_module.elastic_ip_id
   environment           = var.environment
   private_subnets_count = var.private_subnets_count
-  public_subnets        = module.subnet_public_module.public_subnets
 }
